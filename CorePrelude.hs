@@ -175,23 +175,12 @@ import qualified System.Environment
 import qualified Data.Text
 import qualified Data.List
 
-#if MIN_VERSION_base(4,5,0)
 import Data.Monoid ((<>))
-#endif
 
 type LText = Data.Text.Lazy.Text
 type LByteString = Data.ByteString.Lazy.ByteString
 type UVector = Data.Vector.Unboxed.Vector
 
-
-#if !MIN_VERSION_base(4,5,0)
-
-infixr 6 <>
-(<>) :: Monoid w => w -> w -> w
-(<>) = mappend
-{-# INLINE (<>) #-}
-
-#endif
 
 equating :: Eq a => (b -> a) -> b -> b -> Bool
 equating = Data.Function.on (Prelude.==)

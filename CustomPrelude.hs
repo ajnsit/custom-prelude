@@ -7,6 +7,7 @@ module CustomPrelude
   , (<&>), (<@>)
 
   -- Splitting variants
+  , splitWhen
   , splitOn
 
   -- Fold variants
@@ -53,15 +54,20 @@ infixl 4 <@>
 -- SPLITTING --
 ---------------
 
--- Split lists at delimiter
--- Provides the most common use case for splitting lists
+-- Provides the most common use cases for splitting lists
 --  without adding a dependency on the split package
--- NOTE: Drops empty groups (similar to `words`)
-splitOn :: Eq a => a -> [a] -> [[a]]
-splitOn c s = case dropWhile (==c) s of
+-- NOTE: These functions drop empty groups (similar to `words`)
+
+-- Split lists at delimiter specified by a condition
+splitWhen :: (a -> Bool) -> [a] -> [[a]]
+splitWhen p s = case dropWhile p s of
   [] -> []
-  s' -> w : splitOn c s''
-    where (w, s'') = break (==c) s'
+  s' -> w : splitWhen p s''
+    where (w, s'') = break p s'
+
+-- Split lists at the specified delimiter
+splitOn :: Eq a => a -> [a] -> [[a]]
+splitOn c = splitWhen (==c)
 
 
 -------------
@@ -77,20 +83,22 @@ foldlStrict f = lgo
 
 -- Specialised foldl' with short circuit evaluation
 -- A Nothing stops processing for the rest of the list
-foldlMaybe :: (a -> b -> Maybe a) -> a -> [b] -> Maybe a
-foldlMaybe f z0 = lgo (Just z0)
+foldlMaybe :: (a -> b -> Maybe a) -> a -> [b] -> a
+foldlMaybe f = lgo
   where
-    lgo Nothing  _      = Nothing
-    lgo z        []     = z
-    lgo (Just z) (x:xs) = lgo (f z x) xs
+    lgo z []     = z
+    lgo z (x:xs) = case f z x of
+                     Nothing -> z
+                     Just z' -> lgo z' xs
 
 -- Strict version of specialised foldl' with short circuit evaluation
-foldlStrictMaybe :: (a -> b -> Maybe a) -> a -> [b] -> Maybe a
-foldlStrictMaybe f z0 = lgo (Just z0)
+foldlStrictMaybe :: (a -> b -> Maybe a) -> a -> [b] -> a
+foldlStrictMaybe f = lgo
   where
-    lgo Nothing  _      = Nothing
-    lgo z        []     = z
-    lgo (Just z) (x:xs) = let z' = f z x in z' `seq` lgo z' xs
+    lgo z []     = z
+    lgo z (x:xs) = case f z x of
+                     Nothing -> z
+                     Just z' -> z' `seq` lgo z' xs
 
 
 ----------

@@ -3,23 +3,23 @@
 module CustomPrelude
   ( module BasicPrelude
 
-  -- Applicative operators for monads
+  -- * Applicative operators for monads
   , (<&>), (<@>)
 
-  -- Splitting variants
+  -- * Splitting variants
   , splitWhen
   , splitOn
 
-  -- Fold variants
+  -- * Fold variants
   , foldlStrict
   , foldlMaybe
   , foldlStrictMaybe
 
-  -- Misc
+  -- * Misc
   , (.:)
   , bool
 
-  -- Math
+  -- * Math
   , nextPowerOf2
 
   ) where
@@ -35,12 +35,12 @@ import Data.Bits ((.|.), shiftR, bitSize)
 -- Operators equivalent to those in Applicative
 -- Defined for all Monads
 
--- Equivalent to <*>
+-- | Equivalent to <*>
 infixl 4 <&>
 (<&>) :: Monad m => m (a -> b) -> m a -> m b
 (<&>) = ap
 
--- Equivalent to <$>
+-- | Equivalent to <$>
 infixl 4 <@>
 (<@>) :: Monad m => (a -> b) -> m a -> m b
 (<@>) f g = return f <&> g
@@ -56,16 +56,17 @@ infixl 4 <@>
 
 -- Provides the most common use cases for splitting lists
 --  without adding a dependency on the split package
--- NOTE: These functions drop empty groups (similar to `words`)
 
--- Split lists at delimiter specified by a condition
+-- | Split lists at delimiter specified by a condition
+--   Drops empty groups (similar to `words`)
 splitWhen :: (a -> Bool) -> [a] -> [[a]]
 splitWhen p s = case dropWhile p s of
   [] -> []
   s' -> w : splitWhen p s''
     where (w, s'') = break p s'
 
--- Split lists at the specified delimiter
+-- | Split lists at the specified delimiter
+--   Drops empty groups (similar to `words`)
 splitOn :: Eq a => a -> [a] -> [[a]]
 splitOn c = splitWhen (==c)
 
@@ -74,15 +75,15 @@ splitOn c = splitWhen (==c)
 -- FOLDING --
 -------------
 
--- A Standard strict version of foldl
+-- | A Standard strict version of foldl
 foldlStrict :: (a -> b -> a) -> a -> [b] -> a
 foldlStrict f = lgo
   where
     lgo z []     = z
     lgo z (x:xs) = let z' = f z x in z' `seq` lgo z' xs
 
--- Specialised foldl' with short circuit evaluation
--- A Nothing stops processing for the rest of the list
+-- | Specialised foldl' with short circuit evaluation
+--   A Nothing stops processing for the rest of the list
 foldlMaybe :: (a -> b -> Maybe a) -> a -> [b] -> a
 foldlMaybe f = lgo
   where
@@ -91,7 +92,7 @@ foldlMaybe f = lgo
                      Nothing -> z
                      Just z' -> lgo z' xs
 
--- Strict version of specialised foldl' with short circuit evaluation
+-- | Strict version of specialised foldl' with short circuit evaluation
 foldlStrictMaybe :: (a -> b -> Maybe a) -> a -> [b] -> a
 foldlStrictMaybe f = lgo
   where
@@ -105,13 +106,13 @@ foldlStrictMaybe f = lgo
 -- MISC --
 ----------
 
--- Seamless composition of a one and a two arg function
--- (for point free programming)
+-- | Seamless composition of a one and a two arg function
+--   (for point free programming)
 (.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
 (.:) = (.) . (.)
 
--- Bool deconstructor in the spirit of 'either' and 'maybe'
--- Similar to the lambda-if proposal
+-- | Bool deconstructor in the spirit of 'either' and 'maybe'
+--   Similar to the lambda-if proposal
 bool :: a -> a -> Bool -> a
 bool a b p = if p then a else b
 
@@ -120,8 +121,8 @@ bool a b p = if p then a else b
 -- MATH STUFF --
 ----------------
 
--- Computes the next power of two for integers
--- Works only on a 32/64 bit machine (is there any other kind?)
+-- | Computes the next power of two for integers
+--   Works only on a 32/64 bit machine (is there any other kind?)
 nextPowerOf2 :: Int -> Int
 nextPowerOf2 0 = 1
 nextPowerOf2 !n =

@@ -1,7 +1,7 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE NoMonomorphismRestriction #-}
 
-import qualified BasicPrelude as P
+import qualified CustomPrelude as P
 
 type Bool = P.Bool
 _True = P.True

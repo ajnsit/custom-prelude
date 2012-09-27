@@ -19,6 +19,10 @@ module CustomPrelude
   , (.:)
   , bool
 
+  -- * More Monad Loops
+  , whileIterateM
+  , ifM
+
   -- * Math
   , nextPowerOf2
 
@@ -101,6 +105,22 @@ foldlStrictMaybe f = lgo
                      Nothing -> z
                      Just z' -> z' `seq` lgo z' xs
 
+
+----------------------
+-- MORE MONAD LOOPS --
+----------------------
+
+-- | "whileIterateM b f a" will execute action (f a) while (b a) is true
+--   and also feed the results back to the next iteration.
+--   NOTE: Suggestions for a better name are welcome!
+whileIterateM :: Monad m => (a -> m Bool) -> (a -> m a) -> a -> m a
+whileIterateM b f a = ifM (b a) (f a >>= whileIterateM b f) (return a)
+
+-- | Monadic version of the if condition
+ifM :: Monad m => m Bool -> m a -> m a -> m a
+ifM b t f = do
+  ba <- b
+  if ba then t else f
 
 ----------
 -- MISC --

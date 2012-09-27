@@ -15,8 +15,11 @@ module CustomPrelude
   , foldlMaybe
   , foldlStrictMaybe
 
-  -- * Misc
+  -- * Points free programming
   , (.:)
+  , oo, ooo, oooo
+
+  -- * Misc
   , bool
 
   -- * More Monad Loops
@@ -122,14 +125,30 @@ ifM b t f = do
   ba <- b
   if ba then t else f
 
+-----------------------------
+-- POINTS FREE PROGRAMMING --
+-----------------------------
+
+-- | Seamless composition of a one and a two arg function
+(.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
+(.:) = (.) . (.)
+
+-- | An alias for (.:)
+oo :: (c -> d) -> (a -> b -> c) -> a -> b -> d
+oo = (.:)
+
+-- | Seamless composition of a one and a three arg function
+ooo :: (d -> e) -> (a -> b -> c -> d) -> a -> b -> c -> e
+ooo = oo . (.)
+
+-- | Seamless composition of a one and a four arg function
+oooo :: (e -> f) -> (a -> b -> c -> d -> e) -> a -> b -> c -> d -> f
+oooo = ooo . (.)
+
+
 ----------
 -- MISC --
 ----------
-
--- | Seamless composition of a one and a two arg function
---   (for point free programming)
-(.:) :: (c -> d) -> (a -> b -> c) -> a -> b -> d
-(.:) = (.) . (.)
 
 -- | Bool deconstructor in the spirit of 'either' and 'maybe'
 --   Similar to the lambda-if proposal

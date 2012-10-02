@@ -126,9 +126,7 @@ whileIterateM b f a = ifM (b a) (f a >>= whileIterateM b f) (return a)
 
 -- | Monadic version of the if condition
 ifM :: Monad m => m Bool -> m a -> m a -> m a
-ifM b t f = do
-  ba <- b
-  if ba then t else f
+ifM b t f = b >>= bool t f
 
 -----------------------------
 -- POINTS FREE PROGRAMMING --

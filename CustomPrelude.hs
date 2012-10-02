@@ -3,6 +3,9 @@
 module CustomPrelude
   ( module BasicPrelude
 
+  -- Import all Monad loop constructs
+  , module Control.Monad.Loops
+
   -- * Applicative operators for monads
   , (<&>), (<@>)
 
@@ -32,6 +35,8 @@ module CustomPrelude
   ) where
 
 import BasicPrelude
+import Control.Monad.Loops
+
 import Data.Bits ((.|.), shiftR, bitSize)
 
 

@@ -1,4 +1,4 @@
-basic-prelude
+custom-prelude
 =============
 
-An enhanced core prelude, meant for building up more complete preludes on top of.
+An enhanced prelude, serving as a foundation for my projects

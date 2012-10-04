@@ -24,6 +24,10 @@ module CustomPrelude
 
   -- * Misc
   , bool
+  , allEqual
+  , isAscending
+  , isDescending
+  , mapAdjacent
 
   -- * More Monad Loops
   , whileIterateM
@@ -157,6 +161,22 @@ oooo = ooo . (.)
 --   Similar to the lambda-if proposal
 bool :: a -> a -> Bool -> a
 bool a b p = if p then a else b
+
+-- | Checks if all the elements in a list are the same
+allEqual :: Eq a => [a] -> Bool
+allEqual = and . mapAdjacent (==)
+
+-- | Checks if the elements are in ascending order
+isAscending :: (Ord a) => [a] -> Bool
+isAscending = and . mapAdjacent (<=)
+
+-- | Checks if the elements are in descending order
+isDescending :: (Ord a) => [a] -> Bool
+isDescending = and . mapAdjacent (>=)
+
+-- | Combines every pair of neighbour elements
+mapAdjacent :: (a -> a -> b) -> [a] -> [b]
+mapAdjacent f xs = zipWith f xs (tail xs)
 
 
 ----------------

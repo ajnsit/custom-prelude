@@ -6,12 +6,11 @@ module CustomPrelude
   -- Import all Monad loop constructs
   , module Control.Monad.Loops
 
+  -- Import all List Splitting constructs
+  , module Data.List.Split
+
   -- * Applicative operators for monads
   , (<&>), (<@>)
-
-  -- * Splitting variants
-  , splitWhen
-  , splitOn
 
   -- * Fold variants
   , foldlStrict
@@ -43,6 +42,8 @@ module CustomPrelude
 import BasicPrelude
 import Control.Monad.Loops
 
+import Data.List.Split
+
 import Data.Bits ((.|.), shiftR, bitSize)
 
 
@@ -67,27 +68,6 @@ infixl 4 <@>
 -------------------------------------------------------
 -- UTILITY FUNCTIONS THAT SHOULD HAVE BEEN IN PRELUDE--
 -------------------------------------------------------
-
----------------
--- SPLITTING --
----------------
-
--- Provides the most common use cases for splitting lists
---  without adding a dependency on the split package
-
--- | Split lists at delimiter specified by a condition
---   Drops empty groups (similar to `words`)
-splitWhen :: (a -> Bool) -> [a] -> [[a]]
-splitWhen p s = case dropWhile p s of
-  [] -> []
-  s' -> w : splitWhen p s''
-    where (w, s'') = break p s'
-
--- | Split lists at the specified delimiter
---   Drops empty groups (similar to `words`)
-splitOn :: Eq a => a -> [a] -> [[a]]
-splitOn c = splitWhen (==c)
-
 
 -------------
 -- FOLDING --

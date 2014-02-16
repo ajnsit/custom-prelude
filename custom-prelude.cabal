@@ -1,7 +1,7 @@
 name:                custom-prelude
 version:             0.3.0.0
-synopsis:            An enhanced prelude, serving as a foundation for my projects
-description:         An enhanced prelude, serving as a foundation for my projects
+synopsis:            An enhanced prelude, serves as a foundation for my projects
+description:         An enhanced prelude, serves as a foundation for my projects
 homepage:            https://github.com/ajnsit/custom-prelude
 license:             GPL
 license-file:        LICENSE

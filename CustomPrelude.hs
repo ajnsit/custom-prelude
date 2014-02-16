@@ -16,7 +16,9 @@ module CustomPrelude
   -- * Fold variants
   , foldlStrict
   , foldlMaybe
+  , foldlMaybe_
   , foldlStrictMaybe
+  , foldlStrictMaybe_
 
   -- * Points free programming
   , (.:)
@@ -108,6 +110,17 @@ foldlMaybe f = lgo
                      Nothing -> z
                      Just z' -> lgo z' xs
 
+-- | Specialised foldl' with short circuit evaluation
+--   A Nothing stops processing for the rest of the list
+--     AND returns Nothing
+foldlMaybe_ :: (a -> b -> Maybe a) -> a -> [b] -> Maybe a
+foldlMaybe_ f = lgo
+  where
+    lgo z []     = Just z
+    lgo z (x:xs) = case f z x of
+                     Nothing -> Nothing
+                     Just z' -> lgo z' xs
+
 -- | Strict version of specialised foldl' with short circuit evaluation
 foldlStrictMaybe :: (a -> b -> Maybe a) -> a -> [b] -> a
 foldlStrictMaybe f = lgo
@@ -115,6 +128,17 @@ foldlStrictMaybe f = lgo
     lgo z []     = z
     lgo z (x:xs) = case f z x of
                      Nothing -> z
+                     Just z' -> z' `seq` lgo z' xs
+
+-- | Strict version of specialised foldl' with short circuit evaluation
+--   A Nothing stops processing for the rest of the list
+--     AND returns Nothing
+foldlStrictMaybe_ :: (a -> b -> Maybe a) -> a -> [b] -> Maybe a
+foldlStrictMaybe_ f = lgo
+  where
+    lgo z []     = Just z
+    lgo z (x:xs) = case f z x of
+                     Nothing -> Nothing
                      Just z' -> z' `seq` lgo z' xs
 
 
